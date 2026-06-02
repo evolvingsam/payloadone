@@ -1,0 +1,156 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.pycache
+
+# ── Distribution / packaging ──────────────────────────────────────────────────
+dist/
+build/
+*.egg-info/
+*.egg
+MANIFEST
+.eggs/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env/
+ENV/
+env.bak/
+venv.bak/
+
+# ── Environment variables ─────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+
+# ── Poetry ────────────────────────────────────────────────────────────────────
+# Keep poetry.lock in version control — it guarantees reproducible installs
+# poetry.lock  ← intentionally NOT ignored
+
+# ── pytest / coverage ─────────────────────────────────────────────────────────
+.pytest_cache/
+.cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+coverage.json
+nosetests.xml
+test-results/
+junit.xml
+
+# ── mypy ─────────────────────────────────────────────────────────────────────
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ── ruff ─────────────────────────────────────────────────────────────────────
+.ruff_cache/
+
+# ── Type checking ─────────────────────────────────────────────────────────────
+.pytype/
+.pyre/
+
+# ── Jupyter ───────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── IDEs ─────────────────────────────────────────────────────────────────────
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# PyCharm / JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Vim / Neovim
+*.swp
+*.swo
+*~
+.netrwhist
+
+# Emacs
+*#
+.#*
+\#*#
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ── OS files ──────────────────────────────────────────────────────────────────
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encdata
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+.directory
+.Trash-*
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+*.log.*
+logs/
+log/
+
+# ── Secrets / keys ────────────────────────────────────────────────────────────
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+secrets.toml
+secrets.yaml
+secrets.json
+
+# ── Docker ───────────────────────────────────────────────────────────────────
+.dockerenv
+
+# ── Render ───────────────────────────────────────────────────────────────────
+.render/
+
+# ── ngrok ────────────────────────────────────────────────────────────────────
+ngrok.yml
+.ngrok2/
+
+# ── Local dev scratch files ───────────────────────────────────────────────────
+scratch/
+sandbox/
+playground/
+tmp/
+temp/
+*.tmp
+*.bak
+*.orig
+
+# ── Build artefacts ───────────────────────────────────────────────────────────
+*.so
+*.dylib
+*.dll
