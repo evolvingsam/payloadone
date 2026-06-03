@@ -1,0 +1,7 @@
+{
+  "name": "payloadone-docs",
+  "runtime": "static",
+  "buildCommand": "",
+  "startCommand": "",
+  "port": 80
+}

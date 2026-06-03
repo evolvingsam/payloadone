@@ -1,0 +1,2 @@
+payloadone[redis,fastapi]
+uvicorn[standard]

@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="PayloadOne SDK documentation — live testing guide and integration reference for Paystack and Flutterwave webhooks." />
+  <title>PayloadOne — Developer Documentation</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════
+       TOP BAR
+  ══════════════════════════════════════════════ -->
+  <header class="topbar">
+    <a href="#" class="topbar__brand">
+      <span class="topbar__logo">PayloadOne</span>
+      <span class="topbar__version">v0.1.0</span>
+    </a>
+    <nav class="topbar__meta">
+      <span class="topbar__status">LIVE DEMO ACTIVE</span>
+      <span id="topbar-time"></span>
+      <a href="https://github.com/your-org/payloadone" class="topbar__link" target="_blank">GITHUB</a>
+      <a href="https://pypi.org/project/payloadone" class="topbar__link" target="_blank">PYPI</a>
+    </nav>
+  </header>
+
+  <!-- ══════════════════════════════════════════════
+       LAYOUT SHELL
+  ══════════════════════════════════════════════ -->
+  <div class="layout">
+
+    <!-- ── Sidebar ─────────────────────────────── -->
+    <aside class="sidebar">
+
+      <div class="sidebar__section">
+        <p class="sidebar__label">Overview</p>
+        <ul class="sidebar__nav">
+          <li><a href="#overview" class="active">
+            <span class="nav-index">00</span> Introduction
+          </a></li>
+          <li><a href="#credentials">
+            <span class="nav-index">01</span> Credentials
+          </a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar__section">
+        <p class="sidebar__label">Live Testing</p>
+        <ul class="sidebar__nav">
+          <li><a href="#live-setup">
+            <span class="nav-index">02</span> Environment setup
+          </a></li>
+          <li><a href="#live-run">
+            <span class="nav-index">03</span> Run the demo
+          </a></li>
+          <li><a href="#live-send">
+            <span class="nav-index">04</span> Send webhooks
+          </a></li>
+          <li><a href="#live-verify">
+            <span class="nav-index">05</span> Verify results
+          </a></li>
+          <li><a href="#live-failures">
+            <span class="nav-index">06</span> Test failure cases
+          </a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar__section">
+        <p class="sidebar__label">SDK Integration</p>
+        <ul class="sidebar__nav">
+          <li><a href="#sdk-install">
+            <span class="nav-index">07</span> Installation
+          </a></li>
+          <li><a href="#sdk-config">
+            <span class="nav-index">08</span> Configuration
+          </a></li>
+          <li><a href="#sdk-fastapi">
+            <span class="nav-index">09</span> FastAPI
+          </a></li>
+          <li><a href="#sdk-flask">
+            <span class="nav-index">10</span> Flask
+          </a></li>
+          <li><a href="#sdk-handlers">
+            <span class="nav-index">11</span> Writing handlers
+          </a></li>
+          <li><a href="#sdk-events">
+            <span class="nav-index">12</span> Event reference
+          </a></li>
+        </ul>
+      </div>
+
+    </aside>
+
+    <!-- ── Main content ─────────────────────────── -->
+    <main class="content">
+      <div class="content__inner">
+
+        <!-- Ticker -->
+        <div class="ticker" aria-hidden="true">
+          <div class="ticker__inner">
+            <span class="ticker__item">PAYSTACK <span>HMAC-SHA512 ▲</span></span>
+            <span class="ticker__item">FLUTTERWAVE <span>SECRET-HASH ▲</span></span>
+            <span class="ticker__item">IDEMPOTENCY <span>REDIS / POSTGRES ▲</span></span>
+            <span class="ticker__item">PYTHON <span>3.11+ ▲</span></span>
+            <span class="ticker__item">COVERAGE <span>91.9% ▲</span></span>
+            <span class="ticker__item">FASTAPI <span>SUPPORTED ▲</span></span>
+            <span class="ticker__item">FLASK <span>SUPPORTED ▲</span></span>
+            <span class="ticker__item">DJANGO <span>SUPPORTED ▲</span></span>
+            <span class="ticker__item">PAYSTACK <span>HMAC-SHA512 ▲</span></span>
+            <span class="ticker__item">FLUTTERWAVE <span>SECRET-HASH ▲</span></span>
+            <span class="ticker__item">IDEMPOTENCY <span>REDIS / POSTGRES ▲</span></span>
+            <span class="ticker__item">PYTHON <span>3.11+ ▲</span></span>
+            <span class="ticker__item">COVERAGE <span>91.9% ▲</span></span>
+            <span class="ticker__item">FASTAPI <span>SUPPORTED ▲</span></span>
+            <span class="ticker__item">FLASK <span>SUPPORTED ▲</span></span>
+            <span class="ticker__item">DJANGO <span>SUPPORTED ▲</span></span>
+          </div>
+        </div>
+
+        <!-- ════════════════════════════════════════
+             SECTION 00 — OVERVIEW
+        ════════════════════════════════════════ -->
+        <section class="section" id="overview">
+
+          <div class="hero">
+            <p class="hero__eyebrow">Developer Documentation</p>
+            <h1 class="hero__title">Payload<span>One</span></h1>
+            <p class="hero__desc">
+              A Python SDK that sits between incoming Paystack and Flutterwave webhook
+              requests and your business logic. Automatic signature verification,
+              a single normalised event model, and atomic idempotency — before a
+              single line of your code runs.
+            </p>
+            <div class="hero__stats">
+              <div>
+                <span class="hero__stat-label">BASE URL — DEMO &nbsp;</span>
+                <span class="hero__stat-value">https://payloadone-demo.onrender.com</span>
+              </div>
+              <div>
+                <span class="hero__stat-label">PYPI &nbsp;</span>
+                <span class="hero__stat-value">pip install payloadone</span>
+              </div>
+              <div>
+                <span class="hero__stat-label">LICENSE &nbsp;</span>
+                <span class="hero__stat-value">MIT</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════
+             SECTION 01 — CREDENTIALS
+        ════════════════════════════════════════ -->
+        <section class="section" id="credentials">
+          <div class="section__header">
+            <span class="section__number">01</span>
+            <h2 class="section__title">Credentials Reference</h2>
+          </div>
+
+          <p class="section__subtitle">
+            Every credential you will need across both the live testing section
+            and the SDK integration section, in one place.
+          </p>
+
+          <table class="cred-table">
+            <thead>
+              <tr>
+                <th>Credential</th>
+                <th>Where to get it</th>
+                <th>Used for</th>
+                <th>Format</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Paystack Secret Key</td>
+                <td>Paystack Dashboard → Settings → API Keys &amp; Webhooks</td>
+                <td>Signature verification (HMAC-SHA512)</td>
+                <td><code>sk_test_xxxxxxxxxxxx</code></td>
+              </tr>
+              <tr>
+                <td>Flutterwave Secret Hash</td>
+                <td>Flutterwave Dashboard → Settings → Webhooks → Secret Hash</td>
+                <td>Signature verification (plain comparison)</td>
+                <td><code>any string you set</code></td>
+              </tr>
+              <tr>
+                <td>Redis URL</td>
+                <td>Your Redis instance (local or hosted)</td>
+                <td>Idempotency ledger backend</td>
+                <td><code>redis://localhost:6379/0</code></td>
+              </tr>
+              <tr>
+                <td>PostgreSQL DSN</td>
+                <td>Your Postgres instance (optional alternative to Redis)</td>
+                <td>Idempotency ledger backend</td>
+                <td><code>postgresql://user:pass@host/db</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout--warn">
+            <span class="callout__label">Important</span>
+            Always use <strong>test mode</strong> credentials during development.
+            Paystack test keys start with <code>sk_test_</code>.
+            Flutterwave test keys start with <code>FLWSECK_TEST-</code>.
+            These cannot move real money.
+          </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════
+             SECTION 02 — LIVE SETUP
+        ════════════════════════════════════════ -->
+        <section class="section" id="live-setup">
+          <div class="section__header">
+            <span class="section__number">02</span>
+            <h2 class="section__title">Live Testing — Environment Setup</h2>
+          </div>
+
+          <p class="section__subtitle">
+            The live demo is a hosted FastAPI app that has PayloadOne pre-configured.
+            Point your Paystack or Flutterwave test webhook URL at it and watch
+            events arrive in real time — no local setup required.
+          </p>
+
+          <div class="steps">
+
+            <div class="step">
+              <div class="step__num">01</div>
+              <div class="step__body">
+                <p class="step__title">Get your Paystack test secret key</p>
+                <p class="step__desc">
+                  Log in to your Paystack account. Go to
+                  <strong>Settings → API Keys &amp; Webhooks</strong>.
+                  Copy the value under <strong>Secret Key</strong> in the
+                  Test section. It starts with <code>sk_test_</code>.
+                </p>
+                <div class="callout callout--info">
+                  <span class="callout__label">Note</span>
+                  If you do not have a Paystack account, register free at
+                  dashboard.paystack.com. No business verification is needed
+                  for test mode.
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__num">02</div>
+              <div class="step__body">
+                <p class="step__title">Get your Flutterwave secret hash</p>
+                <p class="step__desc">
+                  Log in to your Flutterwave account. Go to
+                  <strong>Settings → Webhooks</strong>.
+                  Under <strong>Secret Hash</strong>, enter any string of your
+                  choice — for example <code>my_test_hash_123</code> — and save.
+                  This exact string is what PayloadOne compares against the
+                  <code>verif-hash</code> header on every inbound request.
+                </p>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__num">03</div>
+              <div class="step__body">
+                <p class="step__title">Register your webhook URLs</p>
+                <p class="step__desc">
+                  In each dashboard, set the webhook URL to the live demo endpoints below.
+                </p>
+                <div class="endpoint">
+                  <span class="endpoint__method">POST</span>
+                  <span class="endpoint__path">https://payloadone-demo.onrender.com/webhooks/paystack</span>
+                </div>
+                <div class="endpoint">
+                  <span class="endpoint__method">POST</span>
+                  <span class="endpoint__path">https://payloadone-demo.onrender.com/webhooks/flutterwave</span>
+                </div>
+                <div class="callout callout--warn">
+                  <span class="callout__label">Important</span>
+                  The live demo uses its own configured test credentials.
+                  Webhooks from your dashboard will only verify correctly
+                  if they are sent in test mode using the demo's pre-configured keys.
+                  For testing with your own keys, run the demo locally — see Section 03.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════
+             SECTION 03 — RUN THE DEMO LOCALLY
+        ════════════════════════════════════════ -->
+        <section class="section" id="live-run">
+          <div class="section__header">
+            <span class="section__number">03</span>
+            <h2 class="section__title">Run the Demo Locally</h2>
+          </div>
+
+          <p class="section__subtitle">
+            Run the demo on your own machine so you can use your own credentials
+            and inspect every log line in real time.
+          </p>
+
+          <div class="steps">
+
+            <div class="step">
+              <div class="step__num">01</div>
+              <div class="step__body">
+                <p class="step__title">Prerequisites</p>
+                <p class="step__desc">You need Python 3.11+, pip, and Redis. Start Redis:</p>
+                <div class="code-block">
+                  <div class="code-block__header">
+                    <span class="code-block__lang">bash</span>
+                    <button class="code-block__copy">COPY</button>
+                  </div>
+                  <pre><code><span class="tok-comment"># Using Docker (recommended)</span>
+<span class="tok-prompt">$ </span>docker run -d -p 6379:6379 --name payloadone-redis redis:7-alpine
+
+<span class="tok-comment"># Or natively on Ubuntu/WSL</span>
+<span class="tok-prompt">$ </span>sudo apt install redis-server && sudo service redis-server start
+
+<span class="tok-comment"># Verify Redis is running</span>
+<span class="tok-prompt">$ </span>redis-cli ping
+<span class="tok-output">PONG</span></code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__num">02</div>
+              <div class="step__body">
+                <p class="step__title">Clone the repository</p>
+                <div class="code-block">
+                  <div class="code-block__header">
+                    <span class="code-block__lang">bash</span>
+                    <button class="code-block__copy">COPY</button>
+                  </div>
+                  <pre><code><span class="tok-prompt">$ </span>git clone https://github.com/your-org/payloadone.git
+<span class="tok-prompt">$ </span>cd payloadone</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__num">03</div>
+              <div class="step__body">
+                <p class="step__title">Create your environment file</p>
+                <p class="step__desc">
+                  Create a <code>.env</code> file inside the <code>demo/</code> folder.
+                  Paste your actual test credentials — no quotes needed.
+                </p>
+                <div class="code-block">
+                  <div class="code-block__header">
+                    <span class="code-block__lang">dotenv — demo/.env</span>
+                    <button class="code-block__copy">COPY</button>
+                  </div>
+                  <pre><code><span class="tok-key">PAYSTACK_SECRET_KEY</span><span class="tok-op">=</span><span class="tok-str">sk_test_your_paystack_key_here</span>
+<span class="tok-key">FLUTTERWAVE_SECRET_HASH</span><span class="tok-op">=</span><span class="tok-str">your_flutterwave_secret_hash_here</span>
+<span class="tok-key">REDIS_URL</span><span class="tok-op">=</span><span class="tok-str">redis://localhost:6379/0</span></code></pre>
+                </div>
+                <div class="callout callout--error">
+                  <span class="callout__label">Never commit this file</span>
+                  The <code>demo/.env</code> file is already listed in <code>.gitignore</code>.
+                  Do not remove it from there. Never paste real secret keys into source code.
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__num">04</div>
+              <div class="step__body">
+                <p class="step__title">Install dependencies and start the server</p>
+                <div class="code-block">
+                  <div class="code-block__header">
+                    <span class="code-block__lang">bash</span>
+                    <button class="code-block__copy">COPY</button>
+                  </div>
+                  <pre><code><span class="tok-comment"># Install the library and demo dependencies</span>
+<span class="tok-prompt">$ </span>pip install -e .
+<span class="tok-prompt">$ </span>pip install -r demo/requirements.txt
+
+<span class="tok-comment"># Load env vars and start — must be done in one command
+# so the server process inherits them</span>
+<span class="tok-prompt">$ </span>export $(cat demo/.env | xargs) && uvicorn demo.main:app --reload --port 8000</code></pre>
+                </div>
+                <p class="step__desc">
+                  You should see <code>Uvicorn running on http://127.0.0.1:8000</code>.
+                  Open <strong>http://localhost:8000/docs</strong> in your browser
+                  to access the interactive Swagger UI.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════
+             SECTION 04 — SEND WEBHOOKS
+        ════════════════════════════════════════ -->
+        <section class="section" id="live-send">
+          <div class="section__header">
+            <span class="section__number">04</span>
+            <h2 class="section__title">Send Test Webhooks</h2>
+          </div>
+
+          <p class="section__subtitle">
+            Use the commands below to simulate what Paystack and Flutterwave
+            send to your server. Run these in a second terminal while the
+            server is running.
+          </p>
+
+          <div class="steps">
+
+            <div class="step">
+              <div class="step__num">01</div>
+              <div class="step__body">
+                <p class="step__title">Send a Paystack payment.success webhook</p>
+                <p class="step__desc">
+                  This generates a valid HMAC-SHA512 signature using your secret key
+                  and sends a <code>charge.success</code> event.
+                </p>
+                <div class="code-block">
+                  <div class="code-block__header">
+                    <span class="code-block__lang">bash</span>
+                    <button class="code-block__copy">COPY</button>
+                  </div>
+                  <pre><code><span class="tok-comment"># Load your env vars in the new terminal first</span>
+<span class="tok-prompt">$ </span>export $(cat demo/.env | xargs)
+
+<span class="tok-comment"># Build the payload</span>
+<span class="tok-prompt">$ </span>PAYLOAD=<span class="tok-str">'{"event":"charge.success","data":{"reference":"ref_001","amount":5000,"currency":"NGN","customer":{"email":"test@example.com","first_name":"Ada","last_name":"Obi"},"metadata":{}}}'</span>
+
+<span class="tok-comment"># Generate the HMAC-SHA512 signature</span>
+<span class="tok-prompt">$ </span>SIG=$(echo -n "$PAYLOAD" | openssl dgst -sha512 -hmac "$PAYSTACK_SECRET_KEY" | awk '{print $2}')
+
+<span class="tok-comment"># Send the webhook</span>
+<span class="tok-prompt">$ </span>curl -s -X POST http://localhost:8000/webhooks/paystack \
+  -H <span class="tok-str">"Content-Type: application/json"</span> \
+  -H <span class="tok-str">"x-paystack-signature: $SIG"</span> \
+  -d <span class="tok-str">"$PAYLOAD"</span></code></pre>
+                </div>
+                <div class="response-grid">
+                  <div class="response-card">
+                    <div class="response-card__status"><span class="badge badge--200">200 OK</span></div>
+                    <pre class="response-card__body">{"status": "acknowledged"}</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__num">02</div>
+              <div class="step__body">
+                <p class="step__title">Send a Flutterwave payment.success webhook</p>
+                <p class="step__desc">
+                  Flutterwave uses a plain secret hash — no HMAC computation needed.
+                  Use a Python script to avoid shell quoting issues on Windows/WSL.
+                </p>
+                <div class="code-block">
+                  <div class="code-block__header">
+                    <span class="code-block__lang">bash — save as send_flw.py and run with python3 send_flw.py</span>
+                    <button class="code-block__copy">COPY</button>
+                  </div>
+                  <pre><code><span class="tok-kw">import</span> urllib.request, json, os
+
+url = <span class="tok-str">"http://localhost:8000/webhooks/flutterwave"</span>
+payload = {
+    <span class="tok-str">"event"</span>: <span class="tok-str">"charge.completed"</span>,
+    <span class="tok-str">"data"</span>: {
+        <span class="tok-str">"id"</span>: <span class="tok-num">1</span>,
+        <span class="tok-str">"tx_ref"</span>: <span class="tok-str">"ref_002"</span>,
+        <span class="tok-str">"amount"</span>: <span class="tok-num">50.00</span>,
+        <span class="tok-str">"currency"</span>: <span class="tok-str">"NGN"</span>,
+        <span class="tok-str">"status"</span>: <span class="tok-str">"successful"</span>,
+        <span class="tok-str">"customer"</span>: {<span class="tok-str">"email"</span>: <span class="tok-str">"test@example.com"</span>, <span class="tok-str">"name"</span>: <span class="tok-str">"Ada Obi"</span>},
+        <span class="tok-str">"meta"</span>: {},
+    },
+}
+body = json.dumps(payload).encode()
+req = urllib.request.Request(url, data=body, method=<span class="tok-str">"POST"</span>)
+req.add_header(<span class="tok-str">"Content-Type"</span>, <span class="tok-str">"application/json"</span>)
+req.add_header(<span class="tok-str">"verif-hash"</span>, os.environ[<span class="tok-str">"FLUTTERWAVE_SECRET_HASH"</span>].strip())
+<span class="tok-kw">try</span>:
+    <span class="tok-kw">with</span> urllib.request.urlopen(req) <span class="tok-kw">as</span> r:
+        <span class="tok-fn">print</span>(<span class="tok-str">"Status:"</span>, r.status, r.read().decode())
+<span class="tok-kw">except</span> urllib.error.HTTPError <span class="tok-kw">as</span> e:
+    <span class="tok-fn">print</span>(<span class="tok-str">"Error:"</span>, e.code, e.read().decode())</code></pre>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════
+             SECTION 05 — VERIFY RESULTS
+        ════════════════════════════════════════ -->
+        <section class="section" id="live-verify">
+          <div class="section__header">
+            <span class="section__number">05</span>
+            <h2 class="section__title">Verify Results</h2>
+          </div>
+
+          <div class="steps">
+
+            <div class="step">
+              <div class="step__num">01</div>
+              <div class="step__body">
+                <p class="step__title">Check received events</p>
+                <p class="step__desc">The demo exposes a <code>/events</code> endpoint that returns all events received in the current session.</p>
+                <div class="code-block">
+                  <div class="code-block__header">
+                    <span class="code-block__lang">bash</span>
+                    <button class="code-block__copy">COPY</button>
+                  </div>
+                  <pre><code><span class="tok-prompt">$ </span>curl http://localhost:8000/events</code></pre>
+                </div>
+                <div class="code-block">
+                  <div class="code-block__header">
+                    <span class="code-block__lang">json — expected response</span>
+                    <button class="code-block__copy">COPY</button>
+                  </div>
+                  <pre><code>{
+  <span class="tok-key">"events"</span>: [
+    {
+      <span class="tok-key">"event_type"</span>: <span class="tok-str">"payment.success"</span>,
+      <span class="tok-key">"provider"</span>:   <span class="tok-str">"paystack"</span>,
+      <span class="tok-key">"reference"</span>:  <span class="tok-str">"ref_001"</span>,
+      <span class="tok-key">"amount_in_lowest_unit"</span>: <span class="tok-num">5000</span>,
+      <span class="tok-key">"currency"</span>:   <span class="tok-str">"NGN"</span>,
+      <span class="tok-key">"customer_email"</span>: <span class="tok-str">"test@example.com"</span>
+    }
+  ]
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__num">02</div>
+              <div class="step__body">
+                <p class="step__title">Test idempotency — send the same webhook twice</p>
+                <p class="step__desc">
+                  Send the exact same Paystack request again using the same
+                  <code>SIG</code> and <code>PAYLOAD</code> variables. The server
+                  returns <code>200</code> but the handler does not run a second time.
+                  Check <code>/events</code> — <code>ref_001</code> appears only once.
+                </p>
+                <div class="callout callout--info">
+                  <span class="callout__label">What this proves</span>
+                  Even if Paystack retries delivery 3 times, your wallet credit
+                  or order fulfilment logic executes exactly once.
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__num">03</div>
+              <div class="step__body">
+                <p class="step__title">Clear the event log</p>
+                <div class="code-block">
+                  <div class="code-block__header">
+                    <span class="code-block__lang">bash</span>
+                    <button class="code-block__copy">COPY</button>
+                  </div>
+                  <pre><code><span class="tok-prompt">$ </span>curl -X DELETE http://localhost:8000/events</code></pre>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════
+             SECTION 06 — FAILURE CASES
+        ════════════════════════════════════════ -->
+        <section class="section" id="live-failures">
+          <div class="section__header">
+            <span class="section__number">06</span>
+            <h2 class="section__title">Test Failure Cases</h2>
+          </div>
+
+          <p class="section__subtitle">
+            Verify that PayloadOne rejects bad requests correctly before they
+            reach your business logic.
+          </p>
+
+          <div class="steps">
+
+            <div class="step">
+              <div class="step__num">01</div>
+              <div class="step__body">
+                <p class="step__title">Bad signature → HTTP 401</p>
+                <div class="code-block">
+                  <div class="code-block__header">
+                    <span class="code-block__lang">bash</span>
+                    <button class="code-block__copy">COPY</button>
+                  </div>
+                  <pre><code><span class="tok-prompt">$ </span>curl -s -X POST http://localhost:8000/webhooks/paystack \
+  -H <span class="tok-str">"Content-Type: application/json"</span> \
+  -H <span class="tok-str">"x-paystack-signature: invalidsignature"</span> \
+  -d <span class="tok-str">"$PAYLOAD"</span></code></pre>
+                </div>
+                <div class="response-grid">
+                  <div class="response-card">
+                    <div class="response-card__status"><span class="badge badge--401">401 UNAUTHORIZED</span></div>
+                    <pre class="response-card__body">{"error": "Signature verification failed..."}</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__num">02</div>
+              <div class="step__body">
+                <p class="step__title">Unknown provider → HTTP 400</p>
+                <div class="code-block">
+                  <div class="code-block__header">
+                    <span class="code-block__lang">bash</span>
+                    <button class="code-block__copy">COPY</button>
+                  </div>
+                  <pre><code><span class="tok-prompt">$ </span>curl -s -X POST http://localhost:8000/webhooks/stripe \
+  -H <span class="tok-str">"Content-Type: application/json"</span> \
+  -d <span class="tok-str">"$PAYLOAD"</span></code></pre>
+                </div>
+                <div class="response-grid">
+                  <div class="response-card">
+                    <div class="response-card__status"><span class="badge badge--400">400 BAD REQUEST</span></div>
+                    <pre class="response-card__body">{"error": "No adapter registered for provider 'stripe'..."}</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════
+             SECTION 07 — INSTALLATION
+        ════════════════════════════════════════ -->
+        <section class="section" id="sdk-install">
+          <div class="section__header">
+            <span class="section__number">07</span>
+            <h2 class="section__title">SDK — Installation</h2>
+          </div>
+
+          <p class="section__subtitle">
+            Install PayloadOne via pip. Choose the extras that match your stack.
+          </p>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">bash</span>
+              <button class="code-block__copy">COPY</button>
+            </div>
+            <pre><code><span class="tok-comment"># Redis backend + FastAPI</span>
+<span class="tok-prompt">$ </span>pip install <span class="tok-str">"payloadone[redis,fastapi]"</span>
+
+<span class="tok-comment"># Redis backend + Flask</span>
+<span class="tok-prompt">$ </span>pip install <span class="tok-str">"payloadone[redis,flask]"</span>
+
+<span class="tok-comment"># PostgreSQL backend instead of Redis</span>
+<span class="tok-prompt">$ </span>pip install <span class="tok-str">"payloadone[postgres,fastapi]"</span>
+
+<span class="tok-comment"># Everything</span>
+<span class="tok-prompt">$ </span>pip install <span class="tok-str">"payloadone[all]"</span></code></pre>
+          </div>
+
+          <div class="callout callout--info">
+            <span class="callout__label">Requirement</span>
+            Python 3.11 or higher is required.
+            Check your version with <code>python --version</code>.
+          </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════
+             SECTION 08 — CONFIGURATION
+        ════════════════════════════════════════ -->
+        <section class="section" id="sdk-config">
+          <div class="section__header">
+            <span class="section__number">08</span>
+            <h2 class="section__title">SDK — Configuration</h2>
+          </div>
+
+          <p class="section__subtitle">
+            All configuration is injected at initialisation time via
+            <code>PayloadOneConfig</code>. Nothing is read from environment
+            variables implicitly — you control the surface.
+          </p>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python</span>
+              <button class="code-block__copy">COPY</button>
+            </div>
+            <pre><code><span class="tok-kw">from</span> payloadone <span class="tok-kw">import</span> PayloadOneConfig
+
+config = PayloadOneConfig(
+    secret_keys={
+        <span class="tok-comment"># Your Paystack test secret key</span>
+        <span class="tok-str">"paystack"</span>:    <span class="tok-str">"sk_test_your_paystack_secret_key"</span>,
+        <span class="tok-comment"># Your Flutterwave secret hash (the string you set in the dashboard)</span>
+        <span class="tok-str">"flutterwave"</span>: <span class="tok-str">"your_flutterwave_secret_hash"</span>,
+    },
+    idempotency_backend=<span class="tok-str">"redis"</span>,        <span class="tok-comment"># "redis" or "postgres"</span>
+    redis_url=<span class="tok-str">"redis://localhost:6379/0"</span>, <span class="tok-comment"># required when backend is "redis"</span>
+    idempotency_ttl_seconds=<span class="tok-num">86400</span>,      <span class="tok-comment"># 24 hours — how long to remember a reference</span>
+)</code></pre>
+          </div>
+
+          <div class="callout callout--warn">
+            <span class="callout__label">Best practice</span>
+            Read credentials from environment variables, never hardcode them.
+            Use <code>os.environ["PAYSTACK_SECRET_KEY"]</code> in production.
+          </div>
+
+          <div class="callout callout--info">
+            <span class="callout__label">PostgreSQL alternative</span>
+            If you prefer PostgreSQL over Redis, use
+            <code>idempotency_backend="postgres"</code> and
+            <code>postgres_dsn="postgresql://user:pass@host/db"</code>.
+            You must also create the idempotency table — see the README.
+          </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════
+             SECTION 09 — FASTAPI
+        ════════════════════════════════════════ -->
+        <section class="section" id="sdk-fastapi">
+          <div class="section__header">
+            <span class="section__number">09</span>
+            <h2 class="section__title">SDK — FastAPI Integration</h2>
+          </div>
+
+          <div class="steps">
+
+            <div class="step">
+              <div class="step__num">01</div>
+              <div class="step__body">
+                <p class="step__title">Wire up the manager and exception handlers</p>
+                <div class="code-block">
+                  <div class="code-block__header">
+                    <span class="code-block__lang">python — main.py</span>
+                    <button class="code-block__copy">COPY</button>
+                  </div>
+                  <pre><code><span class="tok-kw">import</span> os
+<span class="tok-kw">from</span> fastapi <span class="tok-kw">import</span> FastAPI, Request
+<span class="tok-kw">from</span> payloadone <span class="tok-kw">import</span> WebhookManager, PayloadOneConfig
+<span class="tok-kw">from</span> payloadone.models.event <span class="tok-kw">import</span> UnifiedEvent
+<span class="tok-kw">from</span> payloadone.adapters.fastapi <span class="tok-kw">import</span> install_exception_handlers, process_webhook
+
+app = FastAPI()
+
+config = PayloadOneConfig(
+    secret_keys={
+        <span class="tok-str">"paystack"</span>:    os.environ[<span class="tok-str">"PAYSTACK_SECRET_KEY"</span>],
+        <span class="tok-str">"flutterwave"</span>: os.environ[<span class="tok-str">"FLUTTERWAVE_SECRET_HASH"</span>],
+    },
+    idempotency_backend=<span class="tok-str">"redis"</span>,
+    redis_url=os.environ[<span class="tok-str">"REDIS_URL"</span>],
+)
+
+manager = WebhookManager(config=config)
+
+<span class="tok-comment"># Maps PayloadOne exceptions to HTTP 401 / 400 / 422 automatically</span>
+install_exception_handlers(app)</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__num">02</div>
+              <div class="step__body">
+                <p class="step__title">Register your business logic handlers</p>
+                <div class="code-block">
+                  <div class="code-block__header">
+                    <span class="code-block__lang">python</span>
+                    <button class="code-block__copy">COPY</button>
+                  </div>
+                  <pre><code><span class="tok-fn">@manager.on</span>(<span class="tok-str">"payment.success"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">handle_payment</span>(event: UnifiedEvent) -> <span class="tok-kw">None</span>:
+    <span class="tok-comment"># event is verified, deduplicated, and normalised</span>
+    <span class="tok-comment"># amount_in_lowest_unit is always an int (kobo/cents), never a float</span>
+    <span class="tok-kw">await</span> credit_user_wallet(event.reference, event.amount_in_lowest_unit)
+
+<span class="tok-fn">@manager.on</span>(<span class="tok-str">"transfer.success"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">handle_transfer</span>(event: UnifiedEvent) -> <span class="tok-kw">None</span>:
+    <span class="tok-kw">await</span> mark_transfer_complete(event.reference)
+
+<span class="tok-fn">@manager.on</span>(<span class="tok-str">"payment.failed"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">handle_failure</span>(event: UnifiedEvent) -> <span class="tok-kw">None</span>:
+    <span class="tok-kw">await</span> notify_user_of_failure(event.customer_email)</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__num">03</div>
+              <div class="step__body">
+                <p class="step__title">Add the webhook route</p>
+                <div class="code-block">
+                  <div class="code-block__header">
+                    <span class="code-block__lang">python</span>
+                    <button class="code-block__copy">COPY</button>
+                  </div>
+                  <pre><code><span class="tok-fn">@app.post</span>(<span class="tok-str">"/webhooks/{provider}"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">webhook</span>(provider: str, request: Request):
+    <span class="tok-kw">return await</span> process_webhook(manager, provider, request)</code></pre>
+                </div>
+                <p class="step__desc">
+                  Set your webhook URLs in each dashboard:
+                </p>
+                <div class="endpoint">
+                  <span class="endpoint__method">POST</span>
+                  <span class="endpoint__path">https://yourapp.com/webhooks/paystack</span>
+                </div>
+                <div class="endpoint">
+                  <span class="endpoint__method">POST</span>
+                  <span class="endpoint__path">https://yourapp.com/webhooks/flutterwave</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ════════════════════════════════════════
+             SECTION 10 — FLASK
+        ════════════════════════════════════════ -->
+        <section class="section" id="sdk-flask">
+          <div class="section__header">
+            <span class="section__number">10</span>
+            <h2 class="section__title">SDK — Flask Integration</h2>
+          </div>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python — app.py</span>
+              <button class="code-block__copy">COPY</button>
+            </div>
+            <pre><code><span class="tok-kw">import</span> os
+<span class="tok-kw">from</span> flask <span class="tok-kw">import</span> Flask
+<span class="tok-kw">from</span> payloadone <span class="tok-kw">import</span> WebhookManager, PayloadOneConfig
+<span class="tok-kw">from</span> payloadone.models.event <span class="tok-kw">import</span> UnifiedEvent
+<span class="tok-kw">from</span> payloadone.adapters.flask <span class="tok-kw">import</span> process_webhook_sync
+
+app = Flask(__name__)
+
+config = PayloadOneConfig(
+    secret_keys={
+        <span class="tok-str">"paystack"</span>:    os.environ[<span class="tok-str">"PAYSTACK_SECRET_KEY"</span>],
+        <span class="tok-str">"flutterwave"</span>: os.environ[<span class="tok-str">"FLUTTERWAVE_SECRET_HASH"</span>],
+    },
+    idempotency_backend=<span class="tok-str">"redis"</span>,
+    redis_url=os.environ[<span class="tok-str">"REDIS_URL"</span>],
+)
+
+manager = WebhookManager(config=config)
+
+<span class="tok-fn">@manager.on</span>(<span class="tok-str">"payment.success"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">handle_payment</span>(event: UnifiedEvent) -> <span class="tok-kw">None</span>:
+    <span class="tok-kw">await</span> credit_user_wallet(event.reference, event.amount_in_lowest_unit)
+
+<span class="tok-fn">@app.post</span>(<span class="tok-str">"/webhooks/&lt;provider&gt;"</span>)
+<span class="tok-kw">def</span> <span class="tok-fn">webhook</span>(provider: str):
+    <span class="tok-kw">return</span> process_webhook_sync(manager, provider)</code></pre>
+          </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════
+             SECTION 11 — WRITING HANDLERS
+        ════════════════════════════════════════ -->
+        <section class="section" id="sdk-handlers">
+          <div class="section__header">
+            <span class="section__number">11</span>
+            <h2 class="section__title">SDK — Writing Handlers</h2>
+          </div>
+
+          <p class="section__subtitle">
+            Handlers receive a <code>UnifiedEvent</code> that is already verified,
+            deduplicated, and normalised. Write only business logic — no
+            infrastructure concerns.
+          </p>
+
+          <div class="callout callout--info">
+            <span class="callout__label">Handler contract</span>
+            Handlers must be <code>async</code> functions that accept a single
+            <code>UnifiedEvent</code> argument and return <code>None</code>.
+            If a handler raises an exception, the idempotency key is not committed
+            and the event will be retried on next delivery.
+          </div>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python — all supported event types</span>
+              <button class="code-block__copy">COPY</button>
+            </div>
+            <pre><code><span class="tok-fn">@manager.on</span>(<span class="tok-str">"payment.success"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">_</span>(event: UnifiedEvent): ...
+
+<span class="tok-fn">@manager.on</span>(<span class="tok-str">"payment.failed"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">_</span>(event: UnifiedEvent): ...
+
+<span class="tok-fn">@manager.on</span>(<span class="tok-str">"transfer.success"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">_</span>(event: UnifiedEvent): ...
+
+<span class="tok-fn">@manager.on</span>(<span class="tok-str">"transfer.failed"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">_</span>(event: UnifiedEvent): ...
+
+<span class="tok-fn">@manager.on</span>(<span class="tok-str">"refund.processed"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">_</span>(event: UnifiedEvent): ...
+
+<span class="tok-fn">@manager.on</span>(<span class="tok-str">"charge.dispute.create"</span>)
+<span class="tok-kw">async def</span> <span class="tok-fn">_</span>(event: UnifiedEvent): ...</code></pre>
+          </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════
+             SECTION 12 — EVENT REFERENCE
+        ════════════════════════════════════════ -->
+        <section class="section" id="sdk-events">
+          <div class="section__header">
+            <span class="section__number">12</span>
+            <h2 class="section__title">SDK — UnifiedEvent Reference</h2>
+          </div>
+
+          <p class="section__subtitle">
+            Every handler receives a <code>UnifiedEvent</code> regardless of
+            whether the webhook came from Paystack or Flutterwave.
+          </p>
+
+          <table class="cred-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>provider</td>
+                <td><code>Provider</code></td>
+                <td>Source gateway: <code>"paystack"</code> or <code>"flutterwave"</code></td>
+              </tr>
+              <tr>
+                <td>event_type</td>
+                <td><code>EventType</code></td>
+                <td>Normalised event e.g. <code>"payment.success"</code></td>
+              </tr>
+              <tr>
+                <td>reference</td>
+                <td><code>str</code></td>
+                <td>Unique transaction reference — used for idempotency</td>
+              </tr>
+              <tr>
+                <td>amount_in_lowest_unit</td>
+                <td><code>int</code></td>
+                <td>Amount in kobo (NGN) or cents (USD). Always an integer, never a float.</td>
+              </tr>
+              <tr>
+                <td>currency</td>
+                <td><code>str</code></td>
+                <td>ISO 4217 code e.g. <code>"NGN"</code>, <code>"USD"</code></td>
+              </tr>
+              <tr>
+                <td>customer_email</td>
+                <td><code>EmailStr</code></td>
+                <td>Validated email address of the customer</td>
+              </tr>
+              <tr>
+                <td>customer_name</td>
+                <td><code>str | None</code></td>
+                <td>Customer's full name if available</td>
+              </tr>
+              <tr>
+                <td>metadata</td>
+                <td><code>dict</code></td>
+                <td>Passthrough metadata from the original checkout</td>
+              </tr>
+              <tr>
+                <td>raw_payload</td>
+                <td><code>dict</code></td>
+                <td>The original unmodified provider payload for debugging</td>
+              </tr>
+              <tr>
+                <td>provider_event_id</td>
+                <td><code>str | None</code></td>
+                <td>The provider's own event or notification identifier</td>
+              </tr>
+            </tbody>
+          </table>
+
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════ -->
+  <footer class="footer">
+    <span>PAYLOADONE v0.1.0 — MIT LICENSE</span>
+    <span>
+      <a href="https://github.com/your-org/payloadone" target="_blank">GITHUB</a>
+      &nbsp;·&nbsp;
+      <a href="https://pypi.org/project/payloadone" target="_blank">PYPI</a>
+      &nbsp;·&nbsp;
+      <a href="mailto:hello@payloadone.dev">CONTACT</a>
+    </span>
+  </footer>
+
+  <script src="assets/main.js"></script>
+</body>
+</html>
