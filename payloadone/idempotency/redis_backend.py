@@ -6,8 +6,6 @@ concurrent delivery of the same webhook reference cannot produce
 a double-process race condition.
 """
 
-from typing import cast
-
 from ..exceptions import IdempotencyBackendError
 from ..interfaces.idempotency import BaseIdempotencyBackend
 
@@ -49,13 +47,10 @@ class RedisIdempotencyBackend(BaseIdempotencyBackend):
             ttl_seconds: How long a processed reference is retained in Redis
                          before expiry. Defaults to 24 hours.
         """
-        self._client: aioredis.Redis = cast(
-            aioredis.Redis,
-            aioredis.from_url(
-                redis_url,
-                decode_responses=True,
-                socket_connect_timeout=5,
-            ),
+        self._client: aioredis.Redis = aioredis.from_url(  # type: ignore[no-untyped-call]
+            redis_url,
+            decode_responses=True,
+            socket_connect_timeout=5,
         )
         self._ttl = ttl_seconds
 
