@@ -19,10 +19,7 @@ Usage::
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:  # pragma: no cover
-    from ..core.manager import WebhookManager
+import json
 
 try:
     from flask import Response, request
@@ -32,8 +29,7 @@ except ImportError as exc:  # pragma: no cover
         "Install it with: pip install payloadone[flask]"
     ) from exc
 
-import json
-
+from ..core.manager import WebhookManager
 from ..exceptions import (
     NormalisationError,
     SignatureVerificationError,
@@ -42,7 +38,7 @@ from ..exceptions import (
 
 
 def process_webhook_sync(
-    manager: "WebhookManager",
+    manager: WebhookManager,
     provider: str,
 ) -> Response:
     """

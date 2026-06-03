@@ -16,7 +16,7 @@ Table DDL (run once during application setup):
     );
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from ..exceptions import IdempotencyBackendError
 from ..interfaces.idempotency import BaseIdempotencyBackend
@@ -107,7 +107,7 @@ class PostgresIdempotencyBackend(BaseIdempotencyBackend):
                     _INSERT_SQL,
                     provider,
                     reference,
-                    datetime.now(timezone.utc),
+                    datetime.now(UTC),
                 )
                 # INSERT returned a row → new record, not a duplicate.
                 # INSERT returned None → ON CONFLICT fired → duplicate.

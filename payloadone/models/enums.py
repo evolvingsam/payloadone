@@ -1,16 +1,16 @@
 """Enumerations for provider identifiers and normalised event types."""
 
-from enum import Enum
+from enum import StrEnum
 
 
-class Provider(str, Enum):
+class Provider(StrEnum):
     """Supported webhook provider identifiers."""
 
     PAYSTACK = "paystack"
     FLUTTERWAVE = "flutterwave"
 
 
-class EventType(str, Enum):
+class EventType(StrEnum):
     """Normalised event types emitted by PayloadOne regardless of provider."""
 
     PAYMENT_SUCCESS = "payment.success"

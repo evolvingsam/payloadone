@@ -19,15 +19,8 @@ Usage::
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:  # pragma: no cover
-    from fastapi import FastAPI, Request
-
-    from ..core.manager import WebhookManager
-
 try:
-    from fastapi import Request
+    from fastapi import FastAPI, Request
     from fastapi.responses import JSONResponse
 except ImportError as exc:  # pragma: no cover
     raise ImportError(
@@ -35,6 +28,7 @@ except ImportError as exc:  # pragma: no cover
         "Install it with: pip install payloadone[fastapi]"
     ) from exc
 
+from ..core.manager import WebhookManager
 from ..exceptions import (
     NormalisationError,
     SignatureVerificationError,
@@ -42,7 +36,7 @@ from ..exceptions import (
 )
 
 
-def install_exception_handlers(app: "FastAPI") -> None:
+def install_exception_handlers(app: FastAPI) -> None:
     """
     Register PayloadOne exception handlers on a FastAPI application instance.
 
@@ -53,31 +47,29 @@ def install_exception_handlers(app: "FastAPI") -> None:
     Args:
         app: The FastAPI application instance.
     """
-    from fastapi import Request as _Request
-
     @app.exception_handler(SignatureVerificationError)
     async def handle_signature_error(
-        _request: _Request, exc: SignatureVerificationError
+        _request: Request, exc: SignatureVerificationError
     ) -> JSONResponse:
         return JSONResponse(status_code=401, content={"error": str(exc)})
 
     @app.exception_handler(UnknownProviderError)
     async def handle_unknown_provider(
-        _request: _Request, exc: UnknownProviderError
+        _request: Request, exc: UnknownProviderError
     ) -> JSONResponse:
         return JSONResponse(status_code=400, content={"error": str(exc)})
 
     @app.exception_handler(NormalisationError)
     async def handle_normalisation_error(
-        _request: _Request, exc: NormalisationError
+        _request: Request, exc: NormalisationError
     ) -> JSONResponse:
         return JSONResponse(status_code=422, content={"error": str(exc)})
 
 
 async def process_webhook(
-    manager: "WebhookManager",
+    manager: WebhookManager,
     provider: str,
-    request: "Request",
+    request: Request,
 ) -> JSONResponse:
     """
     Convenience helper: extract body and headers from a FastAPI Request
