@@ -47,6 +47,7 @@ def install_exception_handlers(app: FastAPI) -> None:
     Args:
         app: The FastAPI application instance.
     """
+
     @app.exception_handler(SignatureVerificationError)
     async def handle_signature_error(
         _request: Request, exc: SignatureVerificationError
@@ -54,9 +55,7 @@ def install_exception_handlers(app: FastAPI) -> None:
         return JSONResponse(status_code=401, content={"error": str(exc)})
 
     @app.exception_handler(UnknownProviderError)
-    async def handle_unknown_provider(
-        _request: Request, exc: UnknownProviderError
-    ) -> JSONResponse:
+    async def handle_unknown_provider(_request: Request, exc: UnknownProviderError) -> JSONResponse:
         return JSONResponse(status_code=400, content={"error": str(exc)})
 
     @app.exception_handler(NormalisationError)

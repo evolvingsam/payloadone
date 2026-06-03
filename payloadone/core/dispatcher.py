@@ -87,8 +87,7 @@ class Dispatcher:
 
         if not handlers:
             logger.debug(
-                "No handlers registered for event type '%s' (reference: %s). "
-                "Skipping dispatch.",
+                "No handlers registered for event type '%s' (reference: %s). Skipping dispatch.",
                 event.event_type.value,
                 event.reference,
             )

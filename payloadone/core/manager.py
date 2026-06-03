@@ -130,9 +130,7 @@ class WebhookManager:
                 "via WebhookManager(config=config, idempotency_backend=your_backend)."
             )
 
-        raise MisconfigurationError(
-            f"Unknown idempotency_backend '{config.idempotency_backend}'."
-        )
+        raise MisconfigurationError(f"Unknown idempotency_backend '{config.idempotency_backend}'.")
 
     def on(
         self,
@@ -161,8 +159,7 @@ class WebhookManager:
             except ValueError:
                 valid = [e.value for e in EventType]
                 raise MisconfigurationError(
-                    f"'{event_type}' is not a valid EventType. "
-                    f"Valid values are: {valid}"
+                    f"'{event_type}' is not a valid EventType. Valid values are: {valid}"
                 ) from None
 
         resolved_event_type = event_type  # capture for closure
@@ -218,10 +215,10 @@ class WebhookManager:
                 provider = Provider(provider)
             except ValueError:
                 from ..exceptions import UnknownProviderError
+
                 valid = [p.value for p in Provider]
                 raise UnknownProviderError(
-                    f"'{provider}' is not a registered provider. "
-                    f"Valid providers are: {valid}"
+                    f"'{provider}' is not a registered provider. Valid providers are: {valid}"
                 ) from None
 
         await self._pipeline.execute(

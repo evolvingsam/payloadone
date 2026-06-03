@@ -89,9 +89,7 @@ class PaystackProvider(BaseProvider):
         try:
             raw: dict[str, Any] = json.loads(payload)
         except json.JSONDecodeError as exc:
-            raise NormalisationError(
-                f"Paystack payload is not valid JSON: {exc}"
-            ) from exc
+            raise NormalisationError(f"Paystack payload is not valid JSON: {exc}") from exc
 
         try:
             event_str: str = raw["event"]

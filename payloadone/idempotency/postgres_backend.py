@@ -136,9 +136,7 @@ class PostgresIdempotencyBackend(BaseIdempotencyBackend):
             async with self._pool.acquire() as conn:
                 await conn.execute(_CLEANUP_SQL, self._ttl)
         except Exception as exc:
-            raise IdempotencyBackendError(
-                f"PostgreSQL idempotency cleanup failed: {exc}"
-            ) from exc
+            raise IdempotencyBackendError(f"PostgreSQL idempotency cleanup failed: {exc}") from exc
 
     async def close(self) -> None:
         """Close the underlying connection pool."""
