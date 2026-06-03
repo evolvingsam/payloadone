@@ -22,7 +22,7 @@ from ..exceptions import IdempotencyBackendError
 from ..interfaces.idempotency import BaseIdempotencyBackend
 
 try:
-    import asyncpg  # type: ignore[import]
+    import asyncpg
 except ImportError as exc:  # pragma: no cover
     raise ImportError(
         "The PostgreSQL idempotency backend requires the 'asyncpg' package. "
