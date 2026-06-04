@@ -1,48 +1,75 @@
 # PayloadOne
 
-**Secure, normalised, idempotent webhook processing for Paystack and Flutterwave.**
-
-PayloadOne sits between incoming payment webhook requests and your business logic, solving the three most dangerous webhook integration failure modes before a single line of your code runs:
-
-| Problem | PayloadOne's Solution |
-|---|---|
-| Insecure signature validation | Automatic HMAC-SHA512 (Paystack) and secret-hash (Flutterwave) verification using time-constant comparison |
-| Provider payload fragmentation | A single `UnifiedEvent` model regardless of source |
-| No idempotency guarantee | An atomic Redis or PostgreSQL ledger that guarantees exactly-once processing |
+> Secure, normalised, idempotent webhook processing for Paystack and Flutterwave.
 
 ---
-## Live Demo & Docs
 
-Try PayloadOne instantly — no setup or cloning required.
+## What it does
 
-- **Documentation & live testing guide** → https://payloadone-docs-ac0db7a9.quikdb.net
-- **Demo API** → https://payloadone-ac0db7a9.quikdb.net
-- **Interactive API explorer** → https://payloadone-ac0db7a9.quikdb.net/docs
-- **Live event log** → https://payloadone-ac0db7a9.quikdb.net/events
+Integrating payment webhooks is where most backends silently fail. PayloadOne fixes the three most common mistakes before your code ever runs:
 
-Send a real webhook, watch it get verified, deduplicated, and normalised in seconds.
+- **Signature verification** — every inbound request is cryptographically verified (HMAC-SHA512 for Paystack, secret hash for Flutterwave) using time-constant comparison. Forged requests never reach your logic.
+- **Normalisation** — Paystack and Flutterwave send completely different JSON structures for the same event. PayloadOne translates both into one consistent `UnifiedEvent` model so you write your handler once.
+- **Idempotency** — gateways retry webhook delivery on slow or failed responses. PayloadOne checks every transaction reference against an atomic Redis or PostgreSQL ledger and guarantees your handler runs exactly once, no matter how many retries arrive.
 
-## Installation
+---
+
+## How it works
+
+```mermaid
+flowchart TD
+    PS([Paystack]) -->|POST /webhooks/paystack| E
+    FW([Flutterwave]) -->|POST /webhooks/flutterwave| E
+
+    E[Provider Identification] --> V
+    V[Signature Verification] -->|fail| R401([HTTP 401 — Rejected])
+    V -->|pass| I
+    I[Idempotency Check] -->|duplicate| R200D([HTTP 200 — Duplicate])
+    I -->|new| N
+    N[Payload Normalisation] -->|fail| R422([HTTP 422 — Bad Payload])
+    N -->|pass| UE
+    UE[UnifiedEvent] --> D
+    D[Event Dispatch] --> H
+    H[Your Handler\ncredit wallet · fulfil order] --> C
+    C[Idempotency Commit] --> R200([HTTP 200 — Acknowledged])
+
+    style R401 fill:#3a1a1a,stroke:#ff4444,color:#ff4444
+    style R200D fill:#1a2a1a,stroke:#00e5a0,color:#00e5a0
+    style R422 fill:#3a2a1a,stroke:#ffcc00,color:#ffcc00
+    style R200 fill:#1a2a1a,stroke:#00e5a0,color:#00e5a0
+    style UE fill:#1a1a2e,stroke:#ff6600,color:#ff6600
+    style H fill:#1a2a1a,stroke:#00e5a0,color:#00e5a0
+```
+
+```
+Inbound webhook
+      ↓
+1. Verify signature       → reject with 401 if invalid
+2. Check idempotency      → return 200 silently if duplicate
+3. Normalise payload      → produce a UnifiedEvent
+4. Call your handler      → credit wallet, fulfil order, send email
+5. Commit idempotency     → mark reference as processed
+      ↓
+Return 200 to gateway
+```
+
+Your handler only ever sees clean, verified, deduplicated events.
+
+---
+
+## Install
 
 ```bash
-# With Redis backend (recommended)
-pip install "payloadone[redis]"
-
-# With PostgreSQL backend
-pip install "payloadone[postgres]"
-
-# With FastAPI integration
-pip install "payloadone[redis,fastapi]"
-
-# Everything
-pip install "payloadone[all]"
+pip install "payloadone[redis,fastapi]"   # FastAPI + Redis
+pip install "payloadone[redis,flask]"     # Flask + Redis
+pip install "payloadone[all]"             # everything
 ```
 
 Requires Python 3.11+.
 
 ---
 
-## Quickstart (FastAPI)
+## Quickstart
 
 ```python
 from fastapi import FastAPI, Request
@@ -51,36 +78,26 @@ from payloadone.models.event import UnifiedEvent
 from payloadone.adapters.fastapi import install_exception_handlers, process_webhook
 
 app = FastAPI()
-
-config = PayloadOneConfig(
+manager = WebhookManager(config=PayloadOneConfig(
     secret_keys={
-        "paystack": "your-paystack-secret-key",
+        "paystack":    "your-paystack-secret-key",
         "flutterwave": "your-flutterwave-secret-hash",
     },
     idempotency_backend="redis",
     redis_url="redis://localhost:6379",
-)
-
-manager = WebhookManager(config=config)
-install_exception_handlers(app)   # maps exceptions to HTTP 401 / 400 / 422
-
+))
+install_exception_handlers(app)
 
 @manager.on("payment.success")
 async def handle_payment(event: UnifiedEvent) -> None:
     await credit_user_wallet(event.reference, event.amount_in_lowest_unit)
-
-
-@manager.on("transfer.success")
-async def handle_transfer(event: UnifiedEvent) -> None:
-    await mark_transfer_complete(event.reference)
-
 
 @app.post("/webhooks/{provider}")
 async def webhook(provider: str, request: Request):
     return await process_webhook(manager, provider, request)
 ```
 
-Point your Paystack and Flutterwave dashboards at:
+Point your dashboards at:
 ```
 https://yourapi.com/webhooks/paystack
 https://yourapi.com/webhooks/flutterwave
@@ -88,141 +105,26 @@ https://yourapi.com/webhooks/flutterwave
 
 ---
 
-## Quickstart (Flask)
+## Live Demo & Docs
 
-```python
-from flask import Flask
-from payloadone import WebhookManager, PayloadOneConfig
-from payloadone.adapters.flask import process_webhook_sync
+Everything else — full integration guide, live testing, event reference, Flask examples — is in the documentation:
 
-app = Flask(__name__)
-manager = WebhookManager(config=config)  # same config as above
-
-@manager.on("payment.success")
-async def handle_payment(event):
-    await credit_wallet(event.reference, event.amount_in_lowest_unit)
-
-@app.post("/webhooks/<provider>")
-def webhook(provider: str):
-    return process_webhook_sync(manager, provider)
-```
-
----
-
-## The UnifiedEvent Model
-
-Every verified, deduplicated payload is normalised into a single `UnifiedEvent`:
-
-```python
-class UnifiedEvent(BaseModel):
-    provider: Provider              # "paystack" | "flutterwave"
-    event_type: EventType           # "payment.success" | "payment.failed" | ...
-    reference: str                  # Unique transaction reference
-    amount_in_lowest_unit: int      # Kobo (NGN) or cents (USD) — always int, never float
-    currency: str                   # "NGN" | "USD" | ...
-    customer_email: EmailStr
-    customer_name: str | None
-    metadata: dict[str, Any]        # Passthrough checkout metadata
-    raw_payload: dict[str, Any]     # Original unmodified payload
-    provider_event_id: str | None   # Provider's own event ID
-```
-
----
-
-## Provider Configuration Reference
-
-### Paystack
-
-| Setting | Value |
+| | URL |
 |---|---|
-| Secret key | Found in Paystack Dashboard → Settings → API Keys |
-| Signature algorithm | HMAC-SHA512 |
-| Signature header | `x-paystack-signature` |
-| Webhook URL | `https://yourapi.com/webhooks/paystack` |
+| 📖 Documentation & integration guide | https://payloadone-docs-ac0db7a9.quikdb.net |
+| ⚡ Live demo API | https://payloadone-ac0db7a9.quikdb.net |
+| 🔍 Interactive API explorer | https://payloadone-ac0db7a9.quikdb.net/docs |
+| 📋 Live event log | https://payloadone-ac0db7a9.quikdb.net/events |
 
-Supported events: `charge.success`, `charge.failed`, `refund.processed`, `transfer.success`, `transfer.failed`
-
-### Flutterwave
-
-| Setting | Value |
-|---|---|
-| Secret hash | Set in Flutterwave Dashboard → Settings → Webhooks → Secret Hash |
-| Verification method | Time-constant header comparison |
-| Signature header | `verif-hash` |
-| Webhook URL | `https://yourapi.com/webhooks/flutterwave` |
-
-Supported events: `charge.completed` (successful/failed), `transfer.completed` (SUCCESSFUL/FAILED)
+Send a real webhook and watch it get verified, deduplicated, and normalised in seconds — no setup required.
 
 ---
 
-## Idempotency Backends
-
-### Redis (Recommended)
-
-```python
-config = PayloadOneConfig(
-    secret_keys={"paystack": "sk_live_..."},
-    idempotency_backend="redis",
-    redis_url="redis://localhost:6379/0",
-    idempotency_ttl_seconds=86400,  # 24 hours
-)
-```
-
-### PostgreSQL
-
-```python
-from payloadone.idempotency.postgres_backend import PostgresIdempotencyBackend
-
-backend = await PostgresIdempotencyBackend.from_dsn(
-    dsn="postgresql://user:pass@localhost/mydb",
-    ttl_seconds=86400,
-)
-
-manager = WebhookManager(config=config, idempotency_backend=backend)
-```
-
-Run this DDL once:
-```sql
-CREATE TABLE IF NOT EXISTS payloadone_idempotency (
-    provider        TEXT        NOT NULL,
-    reference       TEXT        NOT NULL,
-    processed_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (provider, reference)
-);
-```
-
----
-
-## Event Types
-
-| EventType | Value |
-|---|---|
-| `EventType.PAYMENT_SUCCESS` | `"payment.success"` |
-| `EventType.PAYMENT_FAILED` | `"payment.failed"` |
-| `EventType.REFUND_PROCESSED` | `"refund.processed"` |
-| `EventType.TRANSFER_SUCCESS` | `"transfer.success"` |
-| `EventType.TRANSFER_FAILED` | `"transfer.failed"` |
-| `EventType.CHARGE_DISPUTE_CREATE` | `"charge.dispute.create"` |
-
----
-
-## Running the Tests
+## Running tests
 
 ```bash
-# Install dev dependencies
 poetry install --with dev
-
-# Run the full test suite with coverage
 poetry run pytest
-
-# Run only unit tests
-poetry run pytest tests/unit/
-
-# Run linting
-poetry run ruff check payloadone/
-
-# Run type checking
-poetry run mypy payloadone/
 ```
 
 ---
