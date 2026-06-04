@@ -1,3 +1,5 @@
+import hashlib
+import hmac
 import logging
 import os
 
@@ -97,6 +99,22 @@ async def clear_events():
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+
+@app.post("/dev/sign/paystack")
+async def sign_paystack(request: Request):
+    """
+    Test helper — signs a payload with the demo's Paystack key.
+    Returns the x-paystack-signature header value.
+    Only available in demo mode.
+    """
+    body = await request.body()
+    sig = hmac.new(
+        os.environ["PAYSTACK_SECRET_KEY"].encode(),
+        msg=body,
+        digestmod=hashlib.sha512,
+    ).hexdigest()
+    return {"x-paystack-signature": sig}
 
 
 @app.get("/")

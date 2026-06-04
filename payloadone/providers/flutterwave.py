@@ -43,29 +43,19 @@ class FlutterwaveProvider(BaseProvider):
 
     def verify_signature(
         self,
-        payload: bytes,  # noqa: ARG002 — unused but required by interface contract
+        payload: bytes,
         headers: dict[str, str],
         secret_key: str,
     ) -> bool:
-        """
-        Verify the Flutterwave secret hash.
-
-        Flutterwave does not perform HMAC over the payload body; instead
-        it sends the raw secret hash string as a header. This is compared
-        using time-constant equality to prevent timing attacks.
-
-        Returns False (never raises) on any failure.
-        """
         try:
             normalised_headers = {k.lower(): v for k, v in headers.items()}
-            received_hash = normalised_headers.get(_SIGNATURE_HEADER, "")
+            received_hash = normalised_headers.get(_SIGNATURE_HEADER, "").strip()
 
             if not received_hash:
                 return False
 
-            # time-constant comparison — both operands must be str.
-            return hmac.compare_digest(secret_key, received_hash)
-        except Exception:  # noqa: BLE001
+            return hmac.compare_digest(secret_key.strip(), received_hash)
+        except Exception:
             return False
 
     def extract_reference(self, payload: bytes) -> str:
