@@ -112,9 +112,9 @@ Everything else — full integration guide, live testing, event reference, Flask
 | | URL |
 |---|---|
 | 📖 Documentation & integration guide | https://payloadone-docs-ac0db7a9.quikdb.net |
-| ⚡ Live demo API | https://payloadone-ac0db7a9.quikdb.net |
-| 🔍 Interactive API explorer | https://payloadone-ac0db7a9.quikdb.net/docs |
-| 📋 Live event log | https://payloadone-ac0db7a9.quikdb.net/events |
+| ⚡ Live demo API | https://payloadone |
+| 🔍 Interactive API explorer | https://payloadone.quikdb.net/docs |
+| 📋 Live event log | https://payloadone.quikdb.net/events |
 
 Send a real webhook and watch it get verified, deduplicated, and normalised in seconds — no setup required.
 
